@@ -25,11 +25,11 @@ SECRET_KEY = '2+)*$m#vc#bqoixp-c9954xv%73*5t$fax&$nj$%z7x8q_^)v4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://127.0.0.1:8000','127.0.0.1',]
+ALLOWED_HOSTS = ['http://127.0.0.1:8000','127.0.0.1','*']
 
 #=======for rest framworke acess from another website
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
+    'http://localhost:3000','*'
 ]
 # Application definition
 
