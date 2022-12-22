@@ -1,12 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Create_event from "./Create_event";
-
+import { useSelector, useDispatch } from "react-redux";
+import { Get_event_info } from "../redux/request";
+import { event_info_get } from "../redux/event_redux";
 export default function Event() {
   const [create, setcreate] = useState(false);
+  const dispatch = useDispatch();
+  const event_info = useSelector((state) => state.event.event_info);
+  const [table, settable] = useState();
+
+  const editevent = (id) => {};
+
+  const deltevent = (id) => {};
+
+  useEffect(() => {
+    Get_event_info(1, 5)
+      .then((response) => {
+        var val = [response.data];
+        dispatch(event_info_get(val));
+      })
+      .catch((error) => {});
+  }, []);
+
+  useEffect(() => {
+    var td = [];
+    if (event_info[0]) {
+      event_info[0].map((x, ind) => {
+        if (ind > 2) {
+          td.push(
+            <tr>
+              <td scope="row">{x.Name}</td>
+              <td>{x.Location}</td>
+              <td>{x.Date} UTC</td>
+              <td>
+                <span className="onclick" onClick={() => editevent(`${x.id}`)}>
+                  Edit &#160;
+                </span>
+                <span className="onclick" onClick={() => deltevent(`${x.id}`)}>
+                  Delete
+                </span>
+              </td>
+            </tr>
+          );
+        }
+      });
+      settable(td)
+    }
+  }, [event_info]);
 
   return (
     <div>
-      <div class="container">
+      <div class="container w-75">
         <div class="card">
           <div class="card-body">
             <div style={{ textAlign: "left" }}>
@@ -70,70 +114,7 @@ export default function Event() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td scope="row">USER SDH DSFHKSDJFH KJ</td>
-                          <td>RUSSIA</td>
-                          <td>May 19 2921 -398 UTC</td>
-                          <td>
-                            <span className="onclick">Edit &#160;</span>
-                            <span className="onclick">Delete</span>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td scope="row">USER SDH DSFHKSDJFH KJ</td>
-                          <td>RUSSIA</td>
-                          <td>May 19 2921 -398 UTC</td>
-                          <td>
-                            <span className="onclick">Edit &#160;</span>
-                            <span className="onclick">Delete</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td scope="row">USER SDH DSFHKSDJFH KJ</td>
-                          <td>RUSSIA</td>
-                          <td>May 19 2921 -398 UTC</td>
-                          <td>
-                            <span className="onclick">Edit &#160;</span>
-                            <span className="onclick">Delete</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td scope="row">USER SDH DSFHKSDJFH KJ</td>
-                          <td>RUSSIA</td>
-                          <td>May 19 2921 -398 UTC</td>
-                          <td>
-                            <span className="onclick">Edit &#160;</span>
-                            <span className="onclick">Delete</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td scope="row">USER SDH DSFHKSDJFH KJ</td>
-                          <td>RUSSIA</td>
-                          <td>May 19 2921 -398 UTC</td>
-                          <td>
-                            <span className="onclick">Edit &#160;</span>
-                            <span className="onclick">Delete</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td scope="row">USER SDH DSFHKSDJFH KJ</td>
-                          <td>RUSSIA</td>
-                          <td>May 19 2921 -398 UTC</td>
-                          <td>
-                            <span className="onclick">Edit &#160;</span>
-                            <span className="onclick">Delete</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td scope="row">USER SDH DSFHKSDJFH KJ</td>
-                          <td>RUSSIA</td>
-                          <td>May 19 2921 -398 UTC</td>
-                          <td>
-                            <span className="onclick">Edit &#160;</span>
-                            <span className="onclick">Delete</span>
-                          </td>
-                        </tr>
+                      {table}
                       </tbody>
                     </table>
                   </div>

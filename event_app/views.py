@@ -28,8 +28,8 @@ class events(APIView):
             get_page = Paginator(obj, self.request.query_params.get('page[size]'))
             page_no =get_page.num_pages
             quary = get_page.page(self.request.query_params.get('page[number]')).object_list
-            print(quary)
-            print(self.request.query_params.get('page[number]'), self.request.query_params.get('page[size]'))
+            # print(quary)
+            # print(self.request.query_params.get('page[number]'), self.request.query_params.get('page[size]'))
             data=[]
             data.append({"show": self.request.query_params.get('page[size]'), "totall":obj.count()})
             data.append({"totall_page": page_no})
