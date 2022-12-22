@@ -8,7 +8,7 @@ export default function Create_event() {
   const [date, setdate] = useState();
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(location);
+    console.log(date);
     if (location ===undefined){
     toast.error("Please enter a Location");
     }else{
@@ -49,7 +49,7 @@ export default function Create_event() {
               Date
             </label>
             <input
-              type="date"
+              type="datetime-local"
               class="form-control"
               id="validationDefault05"
               onChange={(e) => setdate(e.target.value)}
