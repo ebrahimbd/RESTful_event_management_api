@@ -18,6 +18,7 @@ class events(APIView):
         if pk:
             Event=event.objects.get(id=pk)
             return Response({
+                "id":Event.id,
                 "Name":Event.name,
                 "Location":Event.location,
                 "Date":Event.Date
@@ -34,6 +35,7 @@ class events(APIView):
             data.append({"totall_page": page_no})
             for Event in quary:
                 data.append({
+                "id":Event.id,
                 "Name":Event.name,
                 "Location":Event.location,
                 "Date":Event.Date
@@ -54,6 +56,7 @@ class events(APIView):
             obj.Date=request.data['Date']
             obj.save()
             return Response({
+                "id":obj.id,
                 "Name":obj.name,
                 "Location":obj.location,
                 "Date":obj.Date
@@ -66,11 +69,19 @@ class events(APIView):
                 })
     
     def delete(self, request, pk):
-        obj=event.objects.get(id=pk)
-        obj.delete()
-        return Response({
+        try:
+            obj=event.objects.get(id=pk)
+            obj.delete()
+            return Response({
+            "id":obj.id,
             "Name":obj.name,
             "Location":obj.location,
             "Date":obj.Date
             })
+        except:
+            return Response({
+                    "Name":"",
+                    "Location":"",
+                    "Date":""
+                    })
     

@@ -1,0 +1,9 @@
+myenv
+Event_management/__pycache__/
+event_app/__pycache__/
+event_app/migrations/
+Event_management/__pycache__/settings.cpython-39.pyc
+event_app/__pycache__/views.cpython-39.pyc
+event_app/__pycache__/models.cpython-39.pyc
+event_app/__pycache__/admin.cpython-39.pyc
+Event_management/__pycache__/settings.cpython-39.pyc
