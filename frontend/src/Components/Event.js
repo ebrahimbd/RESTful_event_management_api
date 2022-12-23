@@ -3,11 +3,15 @@ import Create_event from "./Create_event";
 import { useSelector, useDispatch } from "react-redux";
 import { Get_event_info } from "../redux/request";
 import { event_info_get } from "../redux/event_redux";
+import ReactPaginate from "react-paginate";
 export default function Event() {
   const [create, setcreate] = useState(false);
   const dispatch = useDispatch();
   const event_info = useSelector((state) => state.event.event_info);
   const [table, settable] = useState();
+  const [pageCount, setpageCount] = useState();
+  const [result, setresult] = useState();
+   const [entries, setentries] = useState(5);
 
   const editevent = (id) => {};
 
@@ -22,10 +26,34 @@ export default function Event() {
       .catch((error) => {});
   }, []);
 
+  const handlePageClick = (event) => {
+    Get_event_info(event.selected + 1, 5)
+      .then((response) => {
+        var val = [response.data];
+        dispatch(event_info_get(val));
+      })
+      .catch((error) => {});
+  };
+  const show_entries = (e) => {
+    setentries(e.target.value);
+    Get_event_info(1, e.target.value)
+      .then((response) => {
+        var val = [response.data];
+        dispatch(event_info_get(val));
+      })
+      .catch((error) => {});
+  };
+
   useEffect(() => {
     var td = [];
     if (event_info[0]) {
       event_info[0].map((x, ind) => {
+        if (ind == 0) {
+          setresult(x.totall);
+        }
+        if (ind == 1) {
+          setpageCount(x.totall_page);
+        }
         if (ind > 2) {
           td.push(
             <tr>
@@ -44,7 +72,7 @@ export default function Event() {
           );
         }
       });
-      settable(td)
+      settable(td);
     }
   }, [event_info]);
 
@@ -80,6 +108,7 @@ export default function Event() {
                       class="form-select"
                       aria-label="Default select example"
                       style={{ width: "70px" }}
+                      onChange={(e) => show_entries(e)}
                     >
                       <option value="2">2</option>
                       <option value="3">3</option>
@@ -113,9 +142,7 @@ export default function Event() {
                           </th>
                         </tr>
                       </thead>
-                      <tbody>
-                      {table}
-                      </tbody>
+                      <tbody>{table}</tbody>
                     </table>
                   </div>
                 </div>
@@ -123,57 +150,28 @@ export default function Event() {
               <div class="card-body mytop p-2 pb-0">
                 <div class="d-flex justify-content-between mt-1 ">
                   <span class="text-secondary ">
-                    Showing 1 to 5 of 100 result{" "}
+                    Showing 1 to {entries} of {result ? result : 100} result
                   </span>
-                  <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          Previous
-                        </a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          1
-                        </a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          2
-                        </a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          3
-                        </a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          3
-                        </a>
-                      </li>{" "}
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          ...
-                        </a>
-                      </li>{" "}
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          3
-                        </a>
-                      </li>{" "}
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          3
-                        </a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          Next
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
+                  <ReactPaginate
+                    nextLabel="next >"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={3}
+                    marginPagesDisplayed={2}
+                    pageCount={pageCount ? pageCount : 100}
+                    previousLabel="< previous"
+                    pageClassName="page-item"
+                    pageLinkClassName="page-link"
+                    previousClassName="page-item"
+                    previousLinkClassName="page-link"
+                    nextClassName="page-item"
+                    nextLinkClassName="page-link"
+                    breakLabel="..."
+                    breakClassName="page-item"
+                    breakLinkClassName="page-link"
+                    containerClassName="pagination"
+                    activeClassName="active"
+                    renderOnZeroPageCount={null}
+                  />
                 </div>
               </div>
             </>
