@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Create_event from "./Create_event";
 import { useSelector, useDispatch } from "react-redux";
-import { Get_event_info } from "../redux/request";
+import {
+  Get_event_info,
+  POST_event_info,
+  DELETE_event_info,
+  PUT_event_info,
+} from "../redux/request";
 import { event_info_get } from "../redux/event_redux";
 import ReactPaginate from "react-paginate";
+import { toast } from "react-toastify";
+
 export default function Event() {
   const [create, setcreate] = useState(false);
   const dispatch = useDispatch();
@@ -11,38 +18,75 @@ export default function Event() {
   const [table, settable] = useState();
   const [pageCount, setpageCount] = useState();
   const [result, setresult] = useState();
-   const [entries, setentries] = useState(5);
+  const [entries, setentries] = useState(5);
+  const [delete_event, setdelete_event] = useState(false);
+  const [isedit, setedit] = useState(false);
+  const [editid, seteditid] = useState(0);
 
-  const editevent = (id) => {};
+  const editevent = (id) => {
+    seteditid(id);
+    setedit(true);
+    setcreate(true);
+  };
 
-  const deltevent = (id) => {};
+  const goback = () => {
+    setcreate(false);
+  };
 
-  useEffect(() => {
-    Get_event_info(1, 5)
+  const deltevent = (id) => {
+    DELETE_event_info(id)
       .then((response) => {
-        var val = [response.data];
-        dispatch(event_info_get(val));
+        setdelete_event(delete_event ? false : true);
+        toast.success("Sucessfully Delete Event");
       })
       .catch((error) => {});
-  }, []);
+  };
+
+  const new_event = (data) => {
+    POST_event_info(data)
+      .then((response) => {
+        toast.success("Submit sucessfully ");
+      })
+      .catch((error) => {});
+  };
+
+  const PUT_event = (data, id) => {
+    PUT_event_info(data, id)
+      .then((response) => {
+        toast.success("Edit sucessfully ");
+        seteditid(0);
+      })
+      .catch((error) => {});
+  };
 
   const handlePageClick = (event) => {
-    Get_event_info(event.selected + 1, 5)
+    Get_event_info(event.selected, entries)
       .then((response) => {
         var val = [response.data];
         dispatch(event_info_get(val));
       })
       .catch((error) => {});
   };
+
   const show_entries = (e) => {
-    setentries(e.target.value);
-    Get_event_info(1, e.target.value)
+    var sum = Math.abs(e.target.value);
+    setentries(sum);
+    Get_event_info(1, Math.abs(e.target.value))
       .then((response) => {
         var val = [response.data];
         dispatch(event_info_get(val));
       })
       .catch((error) => {});
   };
+
+  useEffect(() => {
+    Get_event_info(1, entries)
+      .then((response) => {
+        var val = [response.data];
+        dispatch(event_info_get(val));
+      })
+      .catch((error) => {});
+  }, [create, delete_event]);
 
   useEffect(() => {
     var td = [];
@@ -54,12 +98,12 @@ export default function Event() {
         if (ind == 1) {
           setpageCount(x.totall_page);
         }
-        if (ind > 2) {
+        if (ind > 1) {
           td.push(
             <tr>
               <td scope="row">{x.Name}</td>
               <td>{x.Location}</td>
-              <td>{x.Date} UTC</td>
+              <td>{new Date(x.Date).toUTCString().replaceAll("GMT","UTC")} </td>
               <td>
                 <span className="onclick" onClick={() => editevent(`${x.id}`)}>
                   Edit &#160;
@@ -88,7 +132,15 @@ export default function Event() {
                   List of Events - &#160;
                   <span
                     className="onclick"
-                    onClick={() => setcreate(create ? false : true)}
+                    onClick={() => {
+                      setcreate(create ? false : true);
+                      setTimeout(() => {
+                        setedit(false);
+                      }, 100);
+                       setTimeout(() => {
+                          seteditid(0);
+                       }, 200);
+                    }}
                   >
                     {create ? "Back " : "Create"}
                   </span>
@@ -97,7 +149,13 @@ export default function Event() {
             </div>
           </div>
           {create ? (
-            <Create_event />
+            <Create_event
+              post={new_event}
+              edit={isedit}
+              goback={goback}
+              put={PUT_event}
+              id={editid}
+            />
           ) : (
             <>
               <div class="card-body mytop ">
@@ -150,14 +208,14 @@ export default function Event() {
               <div class="card-body mytop p-2 pb-0">
                 <div class="d-flex justify-content-between mt-1 ">
                   <span class="text-secondary ">
-                    Showing 1 to {entries} of {result ? result : 100} result
+                    Showing 1 to {entries} of {result ? result : 0} result
                   </span>
                   <ReactPaginate
                     nextLabel="next >"
                     onPageChange={handlePageClick}
                     pageRangeDisplayed={3}
                     marginPagesDisplayed={2}
-                    pageCount={pageCount ? pageCount : 100}
+                    pageCount={pageCount ? pageCount : 0}
                     previousLabel="< previous"
                     pageClassName="page-item"
                     pageLinkClassName="page-link"

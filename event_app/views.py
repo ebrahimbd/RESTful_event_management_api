@@ -49,24 +49,20 @@ class events(APIView):
             })
     
     def put(self, request, pk):
-        try:
-            obj=event.objects.get(id=pk)
-            obj.name=request.data['Name'],
-            obj.location=request.data['Location'], 
-            obj.Date=request.data['Date']
-            obj.save()
-            return Response({
-                "id":obj.id,
-                "Name":obj.name,
-                "Location":obj.location,
-                "Date":obj.Date
-                })
-        except:
-            return Response({
-                "Name":"",
-                "Location":"",
-                "Date":""
-                })
+        obj=event.objects.get(id=pk)
+        tree=event( id=obj.id, name=request.data['Name'],
+         location=request.data['Location'], 
+            Date=request.data['Date'],
+        )
+        tree.save()
+         
+        
+        return Response({
+        "id":obj.id, 
+        "Name":obj.name,
+        "Location":obj.location,
+        "Date":obj.Date
+        })
     
     def delete(self, request, pk):
         try:

@@ -1,11 +1,30 @@
-import React from 'react'
+import React, { useEffect, useRef } from "react";
 
-export default function location(props) {
-    const select=(e)=>{
-        props.change(e.target.value);
-    }
+export default function Location(props) {
+  const country = useRef();
+
+  const select = (e) => {
+    props.change(e.target.value);
+  };
+  useEffect(() => {
+    try {
+      var defult = props.location_name;
+      var countrySelect = country.current;
+      for (var i, j = 0; (i = countrySelect.options[j]); j++) {
+        if (i.value == defult) {
+          countrySelect.selectedIndex = j;
+          break;
+        }
+      }
+    } catch {}
+  });
   return (
-    <select class="form-select" aria-label="Default select example" onChange={(e)=>select(e)} >
+    <select
+      ref={country}
+      class="form-select"
+      aria-label="Default select example"
+      onChange={(e) => select(e)}
+    >
       <option value="">Select country</option>
       <option value="Afghanistan">Afghanistan</option>
       <option value="Åland Islands">Åland Islands</option>
