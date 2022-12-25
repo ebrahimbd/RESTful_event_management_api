@@ -3,6 +3,7 @@ import './App.css';
 import Event from './Components/Event';
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import Footer from './Components/Footer';
 function App() {
   return (
     <div className="App color">
@@ -19,6 +20,7 @@ function App() {
         draggable
         pauseOnHover
       />
+      <Footer />
     </div>
   );
 }

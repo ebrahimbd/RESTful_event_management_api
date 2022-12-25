@@ -10,6 +10,7 @@ import {
 import { event_info_get } from "../redux/event_redux";
 import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
+import BarLoader from "react-spinners/BarLoader";
 
 export default function Event() {
   const [create, setcreate] = useState(false);
@@ -22,6 +23,7 @@ export default function Event() {
   const [delete_event, setdelete_event] = useState(false);
   const [isedit, setedit] = useState(false);
   const [editid, seteditid] = useState(0);
+  const [loading, setloading] = useState(false);
 
   const editevent = (id) => {
     seteditid(id);
@@ -34,36 +36,44 @@ export default function Event() {
   };
 
   const deltevent = (id) => {
+    setloading(true);
     DELETE_event_info(id)
       .then((response) => {
         setdelete_event(delete_event ? false : true);
         toast.success("Sucessfully Delete Event");
+        setloading(false);
       })
       .catch((error) => {});
   };
 
   const new_event = (data) => {
+    setloading(true);
     POST_event_info(data)
       .then((response) => {
         toast.success("Submit sucessfully ");
+        setloading(false);
       })
       .catch((error) => {});
   };
 
   const PUT_event = (data, id) => {
+    setloading(true);
     PUT_event_info(data, id)
       .then((response) => {
         toast.success("Edit sucessfully ");
         seteditid(0);
+        setloading(false);
       })
       .catch((error) => {});
   };
 
   const handlePageClick = (event) => {
+    setloading(true);
     Get_event_info(event.selected, entries)
       .then((response) => {
         var val = [response.data];
         dispatch(event_info_get(val));
+        setloading(false);
       })
       .catch((error) => {});
   };
@@ -71,24 +81,29 @@ export default function Event() {
   const show_entries = (e) => {
     var sum = Math.abs(e.target.value);
     setentries(sum);
+    setloading(true);
     Get_event_info(1, Math.abs(e.target.value))
       .then((response) => {
         var val = [response.data];
         dispatch(event_info_get(val));
+        setloading(false);
       })
       .catch((error) => {});
   };
 
   useEffect(() => {
-    Get_event_info(1, entries)
+    setloading(true);
+    Get_event_info(1, 5)
       .then((response) => {
         var val = [response.data];
         dispatch(event_info_get(val));
+        setloading(false);
       })
       .catch((error) => {});
   }, [create, delete_event]);
 
   useEffect(() => {
+    setloading(true);
     var td = [];
     if (event_info[0]) {
       event_info[0].map((x, ind) => {
@@ -103,7 +118,9 @@ export default function Event() {
             <tr>
               <td scope="row">{x.Name}</td>
               <td>{x.Location}</td>
-              <td>{new Date(x.Date).toUTCString().replaceAll("GMT","UTC")} </td>
+              <td>
+                {new Date(x.Date).toUTCString().replaceAll("GMT", "UTC")}{" "}
+              </td>
               <td>
                 <span className="onclick" onClick={() => editevent(`${x.id}`)}>
                   Edit &#160;
@@ -114,6 +131,7 @@ export default function Event() {
               </td>
             </tr>
           );
+          setloading(false);
         }
       });
       settable(td);
@@ -137,9 +155,9 @@ export default function Event() {
                       setTimeout(() => {
                         setedit(false);
                       }, 100);
-                       setTimeout(() => {
-                          seteditid(0);
-                       }, 200);
+                      setTimeout(() => {
+                        seteditid(0);
+                      }, 200);
                     }}
                   >
                     {create ? "Back " : "Create"}
@@ -148,6 +166,18 @@ export default function Event() {
               </div>
             </div>
           </div>
+          {loading ? (
+            <div class="card" style={{ transform: "translateY(2px)" }}>
+              <BarLoader
+                color={"#61dafb"}
+                loading={true}
+                height={4}
+                width={"100%"}
+              />
+            </div>
+          ) : (
+            ""
+          )}
           {create ? (
             <Create_event
               post={new_event}
