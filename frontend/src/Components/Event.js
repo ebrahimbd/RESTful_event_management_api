@@ -78,16 +78,15 @@ export default function Event() {
   };
 
   const handlePageClick = (event) => {
-  setloading(true);
-  Get_event_info(event.selected+1, entries)
-    .then((response) => {
-      var val = [response.data];
-      dispatch(event_info_get(val));
-      setloading(false);
-   
-    })
-    .catch((error) => {
-      setloading(true);
+    setloading(true);
+    Get_event_info(event.selected + 1, entries)
+      .then((response) => {
+        var val = [response.data];
+        dispatch(event_info_get(val));
+        setloading(false);
+      })
+      .catch((error) => {
+        setloading(true);
         Get_event_info(event.selected, 1)
           .then((response) => {
             var val = [response.data];
@@ -97,7 +96,7 @@ export default function Event() {
           .catch((error) => {
             setloading(false);
           });
-    });
+      });
   };
 
   const show_entries = (e) => {
@@ -110,7 +109,9 @@ export default function Event() {
         dispatch(event_info_get(val));
         setloading(false);
       })
-      .catch((error) => {setloading(false)});
+      .catch((error) => {
+        setloading(false);
+      });
   };
 
   useEffect(() => {
@@ -133,6 +134,7 @@ export default function Event() {
         var val = [response.data];
         dispatch(event_info_get(val));
         setloading(false);
+        setentries(5);
       })
       .catch((error) => {});
   }, [create, delete_event, editid]);
@@ -234,12 +236,11 @@ export default function Event() {
                       onChange={(e) => show_entries(e)}
                       ref={assign_entries}
                     >
+                      <option value="1" style={{visibility:'hidden'}}>5</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
                       <option value="4">4</option>
-                      <option value="5" selected>
-                        5
-                      </option>
+                      <option value="5">5</option>
                       <option value="6">6</option>
                       <option value="7">7</option>
                       <option value="8">8</option>
