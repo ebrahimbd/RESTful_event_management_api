@@ -41,7 +41,6 @@ class events(APIView):
                 "Date":Event.Date
                 })
             return Response(data)
-       
         return Response({
             "Name":"",
             "Location":"",
@@ -55,8 +54,6 @@ class events(APIView):
             Date=request.data['Date'],
         )
         tree.save()
-         
-        
         return Response({
         "id":obj.id, 
         "Name":obj.name,

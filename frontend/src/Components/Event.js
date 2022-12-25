@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Create_event from "./Create_event";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -24,11 +24,17 @@ export default function Event() {
   const [isedit, setedit] = useState(false);
   const [editid, seteditid] = useState(0);
   const [loading, setloading] = useState(false);
-
+  const assign_entries = useRef();
   const editevent = (id) => {
-    seteditid(id);
-    setedit(true);
-    setcreate(true);
+    setTimeout(() => {
+      seteditid(id);
+    }, 50);
+    setTimeout(() => {
+      setedit(true);
+    }, 100);
+    setTimeout(() => {
+      setcreate(true);
+    }, 150);
   };
 
   const goback = () => {
@@ -61,21 +67,37 @@ export default function Event() {
     PUT_event_info(data, id)
       .then((response) => {
         toast.success("Edit sucessfully ");
-        seteditid(0);
-        setloading(false);
+        setTimeout(() => {
+          seteditid(0);
+        }, 20);
+        setTimeout(() => {
+          setloading(false);
+        }, 50);
       })
       .catch((error) => {});
   };
 
   const handlePageClick = (event) => {
-    setloading(true);
-    Get_event_info(event.selected, entries)
-      .then((response) => {
-        var val = [response.data];
-        dispatch(event_info_get(val));
-        setloading(false);
-      })
-      .catch((error) => {});
+  setloading(true);
+  Get_event_info(event.selected, entries)
+    .then((response) => {
+      var val = [response.data];
+      dispatch(event_info_get(val));
+      setloading(false);
+   
+    })
+    .catch((error) => {
+      setloading(true);
+        Get_event_info(event.selected, 1)
+          .then((response) => {
+            var val = [response.data];
+            dispatch(event_info_get(val));
+            setloading(false);
+          })
+          .catch((error) => {
+            setloading(false);
+          });
+    });
   };
 
   const show_entries = (e) => {
@@ -88,8 +110,21 @@ export default function Event() {
         dispatch(event_info_get(val));
         setloading(false);
       })
-      .catch((error) => {});
+      .catch((error) => {setloading(false)});
   };
+
+  useEffect(() => {
+    try {
+      var defult = entries;
+      var entriesSelect = assign_entries.current;
+      for (var i, j = 0; (i = entriesSelect.options[j]); j++) {
+        if (i.value == defult) {
+          entriesSelect.selectedIndex = j;
+          break;
+        }
+      }
+    } catch {}
+  }, [entries]);
 
   useEffect(() => {
     setloading(true);
@@ -100,7 +135,7 @@ export default function Event() {
         setloading(false);
       })
       .catch((error) => {});
-  }, [create, delete_event]);
+  }, [create, delete_event, editid]);
 
   useEffect(() => {
     setloading(true);
@@ -197,6 +232,7 @@ export default function Event() {
                       aria-label="Default select example"
                       style={{ width: "70px" }}
                       onChange={(e) => show_entries(e)}
+                      ref={assign_entries}
                     >
                       <option value="2">2</option>
                       <option value="3">3</option>
@@ -245,7 +281,7 @@ export default function Event() {
                     onPageChange={handlePageClick}
                     pageRangeDisplayed={3}
                     marginPagesDisplayed={2}
-                    pageCount={pageCount ? pageCount : 0}
+                    pageCount={pageCount ? pageCount : 1}
                     previousLabel="< previous"
                     pageClassName="page-item"
                     pageLinkClassName="page-link"
