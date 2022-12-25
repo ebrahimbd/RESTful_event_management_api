@@ -17,7 +17,7 @@ export default function Event() {
   const dispatch = useDispatch();
   const event_info = useSelector((state) => state.event.event_info);
   const [table, settable] = useState();
-  const [pageCount, setpageCount] = useState();
+  const [pageCount, setpageCount] = useState(0);
   const [result, setresult] = useState();
   const [entries, setentries] = useState(5);
   const [delete_event, setdelete_event] = useState(false);
@@ -79,7 +79,7 @@ export default function Event() {
 
   const handlePageClick = (event) => {
   setloading(true);
-  Get_event_info(event.selected, entries)
+  Get_event_info(event.selected+1, entries)
     .then((response) => {
       var val = [response.data];
       dispatch(event_info_get(val));
@@ -248,7 +248,10 @@ export default function Event() {
                     </select>
                     <span style={{ padding: "10px" }}>entries</span>
                   </div>
-                  <div class="d-flex justify-content-start">
+                  <div
+                    class="d-flex justify-content-start"
+                    style={{ width: "100%", overflow: "auto" }}
+                  >
                     <table class="table table-borderless">
                       <thead>
                         <tr>
@@ -272,7 +275,10 @@ export default function Event() {
                 </div>
               </div>
               <div class="card-body mytop p-2 pb-0">
-                <div class="d-flex justify-content-between mt-1 ">
+                <div
+                  class="d-flex justify-content-between mt-1 "
+                  style={{ width: "100%", overflow: "auto" }}
+                >
                   <span class="text-secondary ">
                     Showing 1 to {entries} of {result ? result : 0} result
                   </span>
@@ -281,7 +287,7 @@ export default function Event() {
                     onPageChange={handlePageClick}
                     pageRangeDisplayed={3}
                     marginPagesDisplayed={2}
-                    pageCount={pageCount ? pageCount : 1}
+                    pageCount={pageCount}
                     previousLabel="< previous"
                     pageClassName="page-item"
                     pageLinkClassName="page-link"
