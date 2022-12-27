@@ -20,6 +20,24 @@ export const Get_event_info = (number, size) =>
     GET();
   });
 
+
+  export const Get_event_by_id = (id) =>
+    new Promise((re, rej) => {
+      const GET = async () => {
+        await axios({
+          method: "GET",
+          url: `http://127.0.0.1:8000/api/events/${id}`,
+        })
+          .then((response) => {
+            re(response);
+          })
+          .catch(function (error) {
+            rej(error);
+          });
+      };
+      GET();
+    });
+
 export const POST_event_info = (data) =>
   new Promise((re, rej) => {
     const POST = async () => {

@@ -2,25 +2,25 @@ import React, { useState, useEffect } from "react";
 import Location from "./location";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-
+import { Get_event_by_id } from "../redux/request";
 export default function Create_event(props) {
   const [name, setname] = useState();
   const [location, setlocation] = useState();
   const [date, setdate] = useState();
   const event_info = useSelector((state) => state.event.event_info);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (location === undefined) {
       toast.error("Please enter a Location");
     } else {
-      props.post({
+      await props.post({
         Name: name,
         Location: location,
         Date: date,
       });
-      props.goback();
+      await props.goback();
     }
   };
 
@@ -43,14 +43,20 @@ export default function Create_event(props) {
   };
 
   useEffect(() => {
-    if (event_info[0]) {
-      event_info[0].map((x, ind) => {
-        if (x.id == props.id) {
-          setname(event_info[0][ind].Name);
-          setdate(event_info[0][ind].Date);
-          setlocation(event_info[0][ind].Location);
-        }
-      });
+    
+    if (props.id) {
+      console.log(props.id)
+        Get_event_by_id(props.id)
+          .then((response) => {
+            var val = [response.data];
+               if (val[0]) {
+                 setname(val[0].Name);
+                 setdate(val[0].Date);
+                 setlocation(val[0].Location);
+               }
+          })
+          .catch((error) => {});
+   
     }
   }, [event_info]);
 

@@ -37,17 +37,47 @@ export default function Event() {
     }, 150);
   };
 
+  const call_entries = () => {
+    try {
+      var defult = entries;
+      console.log(defult);
+      var entriesSelect = assign_entries.current;
+      for (var i, j = 0; (i = entriesSelect.options[j]); j++) {
+        if (i.value == defult) {
+          entriesSelect.selectedIndex = j;
+          break;
+        }
+      }
+    } catch {}
+  };
+
   const goback = () => {
     setcreate(false);
+    setloading(true);
+    Get_event_info(1, entries)
+      .then((response) => {
+        var val = [response.data];
+        dispatch(event_info_get(val));
+        setloading(false);
+        call_entries()
+      })
+      .catch((error) => {});
   };
 
   const deltevent = (id) => {
     setloading(true);
     DELETE_event_info(id)
       .then((response) => {
-        setdelete_event(delete_event ? false : true);
         toast.success("Sucessfully Delete Event");
         setloading(false);
+        Get_event_info(1, entries)
+          .then((response) => {
+            var val = [response.data];
+            dispatch(event_info_get(val));
+            setloading(false);
+            call_entries();
+          })
+          .catch((error) => {});
       })
       .catch((error) => {});
   };
@@ -129,15 +159,15 @@ export default function Event() {
 
   useEffect(() => {
     setloading(true);
-    Get_event_info(1, 5)
+    Get_event_info(1, entries)
       .then((response) => {
         var val = [response.data];
         dispatch(event_info_get(val));
         setloading(false);
-        setentries(5);
+         call_entries();
       })
       .catch((error) => {});
-  }, [create, delete_event, editid]);
+  }, [editid]);
 
   useEffect(() => {
     setloading(true);
@@ -236,7 +266,9 @@ export default function Event() {
                       onChange={(e) => show_entries(e)}
                       ref={assign_entries}
                     >
-                      <option value="1" style={{visibility:'hidden'}}>5</option>
+                      <option value="1" style={{ visibility: "hidden" }}>
+                        5
+                      </option>
                       <option value="2">2</option>
                       <option value="3">3</option>
                       <option value="4">4</option>
