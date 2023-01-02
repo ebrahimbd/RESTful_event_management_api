@@ -16,6 +16,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/', schema_view.with_ui('redoc',cache_timeout=0), name='read_doc' ),
+    path('', schema_view.with_ui('redoc',cache_timeout=0), name='read_doc' ),
     path('api/', include("event_app.urls")),
 ]
